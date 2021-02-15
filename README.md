@@ -111,3 +111,7 @@ Read-Host "`n`nThe clipboard gather loop has been completed.`nAll results have b
 $array | clip # Add to clipboard again just in case
 ```
 
+## Conclusion
+This was done all to make easy exporting of the wish list possible, and the closest attempt I saw to this was a spreadsheet that did the parsing of the raw values copied out. But that is crazy tedious and too complicated for most to deal with I imagine.  
+This solution is hopefully simple and easy enough that everyone will actually bother to do it. I also hope it helps people to pool together their wish histories for data analytics which I would love to see.  
+Oh and just in case anyone is generous I made a [paypal whale fund](https://paypal.me/pools/c/8wWLvN3rpD). Though please note, I don't need money and these funds will be spent on gatcha, which most would consider irresponsible spending.
