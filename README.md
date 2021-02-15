@@ -1,14 +1,14 @@
 # Genshin-Wish-Export
-Given that Genshin Impact has decided to remove wishes after 6 months exporting your wishes is more important than ever. 
+Given that Genshin Impact has decided to remove wishes after 6 months, exporting your wishes is more important than ever. 
 However, as they've made it as hard as possible to do so (only in game via custom browser) most will likely not be willing to take up the task and time commitment.
 This speaks nothing of the burden it is to maintain such a list.
 
-To ease the task, I've written a very simple power shell script but one that works in what I feel was a clever method.
-As the Genshin Impacts 'Wish History' is a browser as mentioned above, on PC you can use the keyboard shortcuts to copy and paste the text from it. 
-Of course, to make things harder its formatting is bad and requires extensive parsing, which is why I started with a script.
+To ease the task, I've written a very simple power shell script; one that works in what I feel is a clever method.
+As the Genshin Impacts 'Wish History' runs in a browser as mentioned above, on PC you can use the keyboard shortcuts to copy and paste the text from it.
+Of course, to make things harder, its formatting is bad and requires extensive parsing, which is why I started with a script.
 
 This script is designed to work with [this spreadsheet](https://docs.google.com/spreadsheets/d/1B9AXURjB4Y0HvOCBhIt8TzaqP1phoI17JlM_RvNtd9g/), which I found in this [reddit post](https://www.reddit.com/r/Genshin_Impact/comments/l2vi4w/my_friend_and_i_made_a_spreadsheet_to_see_all_of/).  
-The spreadsheet was designed and posted to reddit by [/u/damoncles](https://www.reddit.com/user/damoncles) and has saved me a lot of time since I didn't have to make one myself to go with this script. As such the output of this script is formated to directly be copy pasted into this sheet and may not work with others that expect the raw values.
+The spreadsheet was designed and posted to reddit by [/u/damoncles](https://www.reddit.com/user/damoncles) and has saved me a lot of time since I didn't have to make one myself to go with this script. As such, the output of this script is formated to be directly copy/pasted into the spreadsheet and may not work with others that expect the raw values.
 
 ## How it works (Simple)
 0) Run the script, it starts monitoring the clipboard.
@@ -26,17 +26,19 @@ Once it detects a change it does a regex search for '(Weapon|Character)$' with 2
 
 There is a sleep timer and a counter in the main loop that gives 10 seconds without a new clipboard being detected before it exits. It then reverses the array since we want it oldest to newest for our spreadsheet and tosses it at the clipboard. It also read-hosts the ending message so the user has a moment to process it.
 
-I also toss the array to the clipboard after exiting that way if you’re like me and used a macro to fully automate it you don’t have to worry about the array having been dumped for the 100th refreshed copy command from the macro. 
+I also toss the array to the clipboard after exiting, that way if you’re like me and used a macro to fully automate it you don’t have to worry about the array having been dumped for the 100th refreshed copy command from the macro. 
 
 ### Wait macros?  
-Yes, if you have a keyboard/mouse with the ability to make macros and assign them to a hotkey this is very easy to automate. You can also do this via the AutoHotkey software if you don't have a device that supports doing so.  
-Just make a macro that does [Ctrl+A -> Ctrl+C -> Left-Click] and repeat. Make sure your mouse is on the next page button and that you've clicked the page and step away until done.  
-The timeout will happen once you reach the end of your history and then you can simply exit the program and the array is tossed to the clipboard again.
+Yes, if you have a keyboard/mouse with the ability to make macros and assign them to a hotkey this is very easy to automate. You can also do this via the AutoHotkey software if you don't have a device that supports doing so. 
+
+Just make a macro that does [Ctrl+A -> Ctrl+C -> Left-Click] and repeat. Make sure your mouse is on the "next page" button and that you've clicked somewhere on the page before you start the macro, and step away until done.  
+
+The timeout will happen once you reach the end of your history and then you can simply exit the program, and the array is tossed to the clipboard again.
 
 ## How can I trust your code?
-Good stance to have, the code is easily readable and overly commented to guide anyone (hopefully) to understand what is going on so long as you’ve grasped a programing language before. If you haven’t hopefully this is gets popular enough that someone (probably much better at coding than me) on the reddit thread can go over it and vouches for it.
+Good stance to have; the code is easily readable and overly commented to guide anyone (hopefully) to understand what is going on so long as you’ve grasped a programing language before. If you haven’t, hopefully this gets popular enough that someone (probably much better at coding than me) on the reddit thread can go over it and vouch for it.
 
-Below is the exact code, as its powershell you can copy this into a powershell console or into the powershell ISE and run it directly yourself instead of using the .ps1 file located here.
+Below is the exact code, and since it's powershell, you can copy this into a powershell console or into the powershell ISE and run it directly yourself instead of using the .ps1 file located here.
 
 ```
 # Initilizing Variables
