@@ -1,10 +1,10 @@
-# Genshin-Wish-Export
+# Genshin Wish History Export Powershell Script
 Given that Genshin Impact has decided to remove wish history after 6 months, exporting your history is more important than ever. 
-However, as they've made it as hard as possible to do so (only in game via custom browser) most will likely not be willing to take up the task and time commitment.
+However, since they've made it as hard as possible to do so (only in game via custom browser), most will likely not be willing to take up the task and time commitment.
 This speaks nothing of the burden it is to maintain such a list.
 
 To ease the task, I've written a very simple power shell script; one that works in what I feel is a clever method.
-As the Genshin Impacts 'Wish History' runs in a browser as mentioned above, on PC you can use the keyboard shortcuts to copy and paste the text from it.
+Since the Genshin Impact 'Wish History' runs in a browser as mentioned above, on PC you can use the keyboard shortcuts to copy and paste the text from it.
 Of course, to make things harder, its formatting is bad and requires extensive parsing, which is why I started with a script.
 
 This script is designed to work with [this spreadsheet](https://docs.google.com/spreadsheets/d/1B9AXURjB4Y0HvOCBhIt8TzaqP1phoI17JlM_RvNtd9g/), which I found in this [reddit post](https://www.reddit.com/r/Genshin_Impact/comments/l2vi4w/my_friend_and_i_made_a_spreadsheet_to_see_all_of/).  
@@ -29,9 +29,9 @@ There is a sleep timer and a counter in the main loop that gives 10 seconds with
 I also toss the array to the clipboard after exiting, that way if you’re like me and used a macro to fully automate it you don’t have to worry about the array having been dumped for the 100th refreshed copy command from the macro. 
 
 ### Wait macros?  
-Yes, if you have a keyboard/mouse with the ability to make macros and assign them to a hotkey this is very easy to automate. You can also do this via the AutoHotkey software if you don't have a device that supports doing so. 
+Yes, if you have a keyboard/mouse with the ability to make macros and assign them to a hotkey, this is very easy to automate. You can also do this via the AutoHotkey software if you don't have a device that supports doing so. 
 
-Just make a macro that does [Ctrl+A -> Ctrl+C -> Left-Click] and repeat. Make sure your mouse is on the "next page" button and that you've clicked somewhere on the page before you start the macro, and step away until done.  
+Just make a macro that does [Ctrl+A -> Ctrl+C -> Left-Click] and repeat (with a 1+ second delay). Make sure your mouse is on the "next page" button and that you've clicked somewhere on the page before you start the macro, and step away until done.  
 
 The timeout will happen once you reach the end of your history and then you can simply exit the program, and the array is tossed to the clipboard again.
 
