@@ -1,5 +1,5 @@
 # Genshin-Wish-Export
-Given that Genshin Impact has decided to remove wishes after 6 months, exporting your wishes is more important than ever. 
+Given that Genshin Impact has decided to remove wish history after 6 months, exporting your history is more important than ever. 
 However, as they've made it as hard as possible to do so (only in game via custom browser) most will likely not be willing to take up the task and time commitment.
 This speaks nothing of the burden it is to maintain such a list.
 
