@@ -38,6 +38,8 @@ The timeout will happen once you reach the end of your history and then you can 
 ## How can I trust your code?
 Good stance to have; the code is easily readable and overly commented to guide anyone (hopefully) to understand what is going on so long as you’ve grasped a programing language before. If you haven’t, hopefully this gets popular enough that someone (probably much better at coding than me) on the reddit thread can go over it and vouch for it.
 
+[Reddit Post](https://www.reddit.com/r/Genshin_Impact/comments/lkprrl/automated_wish_history_export_via_powershell_for/)
+
 Below is the exact code, and since it's powershell, you can copy this into a powershell console or into the powershell ISE and run it directly yourself instead of using the .ps1 file located here.
 
 ```
