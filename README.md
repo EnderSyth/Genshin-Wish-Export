@@ -22,7 +22,7 @@ The script will timeout automatically after 10 seconds of inactivity, results ar
 ## More complicated
 The script works by calling the contents of the clipboard and comparing against its last recorded version. This means it does not double count if you copy the text 10 times in a row.
 
-Once it detects a change it does a regex search for '(Weapon|Character)$' with 2 post-context which grabs a match object we can then use to build our output string array. I do this with an ugly piped expression, but it works and reorders the match to fit being exported into the spreadsheet linked above.
+Once it detects a change it does a regex search for '(Weapon|Character)$' with 2 post-context which grabs a match object we can then use to build our output string array. I do this with an ugly piped expression, but it works and reorders the match to fit being exported into the spreadsheets linked above.
 
 There is a sleep timer and a counter in the main loop that gives 10 seconds without a new clipboard being detected before it exits. It then reverses the array since we want it oldest to newest for our spreadsheet and tosses it at the clipboard. It also read-hosts the ending message so the user has a moment to process it.
 
@@ -60,10 +60,9 @@ $msWeWaited = 0                        # How many milisecond we've waited, added
 $msExit = $secondsBeforeExit*1000      # This makes it code cleaner later
 
 # Write to host that we've started and let them know what to do
-$choice = Read-Host "1) Genshin Wish Tracker (default, cleaned format)`n2) Genshin Wish Tally (raw data)`nPlease choose your export format."
+$choice = Read-Host "1) Genshin Wish Tracker (Default, clean format)`n2) Genshin Wish Tally (Raw data + overide counter)`nPlease choose your export format."
 Write-Host "`n`nBe sure to READ ALL instructions before starting`nIf able, you can move this window to a second screen to watch as the script runs, otherwise it runs in the background"
 Write-Host "`n1) Please go onto your Genshin wish history page `n2) Select all the text on the page (Ctrl+A after clicking anywhere in the page) `n3) Then copy (Ctrl+C) this text, there is no need to paste the text anywhere, data is gathered automtically `n4) Switch to the next page and repeat until the end `n`nThe script will timeout automatically after $secondsBeforeExit seconds of inactivity, results are copied to the clipboard in reverse order (to arrange oldest to newest)"
-
 switch ($choice) {
     1{$format = 1}
     2{$format = 2}
@@ -121,12 +120,34 @@ while($active) {
         $msWeWaited += $milisecondSleepTime
     }    
 }
-# Once we've exited I reverse the array so the oldest stuff is first, makes it easier to put into the spreadsheet, then pipe/pass (|) the results to the clipboard (clip.exe or clip for short)
-[Array]::Reverse($array)
-$array | clip
 
-Read-Host "`n`nThe clipboard gather loop has been completed.`nAll results have been copied to your clipboard. Please paste (Ctrl+V) the results into the spreadsheet.`n`nPress the enter key to exit."
-$array | clip # Add to clipboard again just in case
+# Once we've exited I reverse the array so the oldest stuff is first, makes it easier to put into the spreadsheet since its in the correct order
+[Array]::Reverse($array)
+
+# Here we check if we're in Wish Tally format, if so we need to add override values to prevent sorting errors for multipulls
+if ($format -eq 2) {
+    # Grab array of just times then pull out the unique values
+    $timeArray = foreach ($item in $array) { ($item | sls -Pattern "[\d- :]{19}").Matches.Value }
+    $uniqueTimes = $timeArray | Get-Unique
+
+    # Here we set an array equal to the results of a foreach loop, we're going through each unique time and finding all the results that match, if there is more than 1 we add override numbers with `t characters
+    $formatedArray = foreach ($time in $uniqueTimes) {
+        $i = 1
+        $timeMatches = $array | sls -SimpleMatch $time
+        if ($timeMatches.Count -gt 1) {
+            $timeMatches | %{"$_`t$i" -replace "[\r\n]+","" ;$i++} # Here was do a foreach in short hand with %{}, we're also replacing any extra return (\r) or newlines (\n) with nothing to clean up the results
+        } else {
+            $timeMatches -replace "[\r\n]+"
+        }
+    }
+    # Set the array equal to our formated array
+    $array = $formatedArray
+}
+
+# Then pipe/pass (|) the array to the clipboard (clip.exe or clip for short)
+$array | clip
+Read-Host "`n`nThe clipboard gather loop has been completed.`nAll results have been copied to your clipboard. Please paste (Ctrl+V) the results into the spreadsheet.`n`nPress the enter key to exit and re-copy the data to the clipboard again."
+$array | clip # Add to clipboard again just in case its been overriden by a user copy command while the script was waiting
 ```
 
 ## Conclusion
