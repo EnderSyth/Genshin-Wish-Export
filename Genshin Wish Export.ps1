@@ -14,6 +14,9 @@ $secondsBeforeExit = 10                # How many seconds with nothing new copie
 $msWeWaited = 0                        # How many milisecond we've waited, added from the sleep timer in loop
 $msExit = $secondsBeforeExit*1000      # This makes it code cleaner later
 
+# Here we create the regex match for all languages, it's long but efficent enough with regex, uses twin anchors at the start and end to handle only matching in the wishes
+$regexMatch = "^(Weapon|Character|무기|캐릭터|武器|角色|武器|キャラクター|Arma|Personaje|Arme|Personnage|Оружие|Персонажи|อาวุธ|ตัวละคร|Vũ Khí|Nhân Vật|Waffe|Figur|Senjata|Karakter)$"
+
 # Write to host that we've started and let them know what to do
 $choice = Read-Host "1) Genshin Wish Tracker (Default, clean format)`n2) Genshin Wish Tally (Raw data + overide counter)`nPlease choose your export format."
 Write-Host "`n`nBe sure to READ ALL instructions before starting`nIf able, you can move this window to a second screen to watch as the script runs, otherwise it runs in the background"
@@ -38,7 +41,7 @@ while($active) {
     if ($compared -ne $null -and $clipboard -ne "") {
         # Main logic here is to parse through the windows clipboard to find a line containing Weapon or Character and thats it. 
         # Clipboard stores each newline as an item in a string array so we need to grab 2 post context as genshin web table copies in each entry as a newline rather than a tabbed table
-        $matchList = $clipboard | Select-String -Pattern '(Weapon|Character)$' -Context 0,2
+        $matchList = $clipboard | Select-String $regexMatch -Context 0,2
 
         # Setup data format based off choice
         switch ($format) {
@@ -99,7 +102,7 @@ if ($format -eq 2) {
     $array = $formatedArray
 }
 
-# Then pipe/pass (|) the array to the clipboard (clip.exe or clip for short)
-$array | clip
+# We use Set-Clipboard to store the array into the clipboard in UTF8 Compliant charactes for other languages
+Set-Clipboard $array
 Read-Host "`n`nThe clipboard gather loop has been completed.`nAll results have been copied to your clipboard. Please paste (Ctrl+V) the results into the spreadsheet.`n`nPress the enter key to exit and re-copy the data to the clipboard again."
-$array | clip # Add to clipboard again just in case its been overriden by a user copy command while the script was waiting
+Set-Clipboard $array # Add to clipboard again just in case its been overriden by a user copy command while the script was waiting
