@@ -8,6 +8,7 @@ Clear-Host
 
 # Setting loop starting condition
 $active = $true                        # We use this for the loop below  
+$format = 1                            # Default format option (Genshin Wish Traker)
 $milisecondSleepTime = 250             # How long we sleep before checking the clipboard
 $secondsBeforeExit = 10                # How many seconds with nothing new copied, we exit after this
 $msWeWaited = 0                        # How many milisecond we've waited, added from the sleep timer in loop
@@ -16,6 +17,11 @@ $msExit = $secondsBeforeExit*1000      # This makes it code cleaner later
 # Write to host that we've started and let them know what to do
 Write-Host "Be sure to READ ALL instructions before starting`nIf able, you can move this window to a second screen to watch as the script runs, otherwise it runs in the background"
 Write-Host "`n1) Please go onto your Genshin wish history page `n2) Select all the text on the page (Ctrl+A after clicking anywhere in the page) `n3) Then copy (Ctrl+C) this text, there is no need to paste the text anywhere, data is gathered automtically `n4) Switch to the next page and repeat until the end `n`nThe script will timeout automatically after $secondsBeforeExit seconds of inactivity, results are copied to the clipboard in reverse order (to arrange oldest to newest)"
+$choice = Read-Host "`n`n1) Genshin Wish Tracker (default, cleaned format)`n2) Genshin Wish Tally (raw data)`nPlease choose your export format."
+switch ($choice) {
+    1{$format = 1}
+    2{$format = 2}
+}
 
 # Start loop
 while($active) {
@@ -33,9 +39,18 @@ while($active) {
         # Main logic here is to parse through the windows clipboard to find a line containing Weapon or Character and thats it. 
         # Clipboard stores each newline as an item in a string array so we need to grab 2 post context as genshin web table copies in each entry as a newline rather than a tabbed table
         $matchList = $clipboard | Select-String -Pattern '(Weapon|Character)$' -Context 0,2
-        # Now we pipe (pass along) the match list to a foreach loop (%{}) and extract the values from each objects ($_) properties. Joined with tabs (`t). Ordered to work with the spreadsheet. Looks ugly but runs great
-        $strArrayList = $matchList | %{"$($_.Context.DisplayPostContext[1])`t$($_.Context.DisplayPostContext[0] -replace ' \(.*\)','' )`t$($_.Matches.Value)"}
 
+        # Setup data format based off choice
+        switch ($format) {
+            1{
+                # Now we pipe (pass along) the match list to a foreach loop (%{}) and extract the values from each objects ($_) properties. Joined with tabs (`t). Ordered to work with the spreadsheet. Looks ugly but runs great
+                $strArrayList = $matchList | %{"$($_.Context.DisplayPostContext[1])`t$($_.Context.DisplayPostContext[0] -replace ' \(.*\)','' )`t$($_.Matches.Value)"}
+            }
+            2{
+                $strArrayList = $matchList | %{($_.Matches.Value,($_.Context.DisplayPostContext -join "")) -join "" }
+            }
+
+        }
         # Check if we already have an array, if so add, if not make one
         if ($array) {$array+=$strArrayList} 
         else {$array = $strArrayList}
