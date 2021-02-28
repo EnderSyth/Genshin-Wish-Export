@@ -15,9 +15,10 @@ $msWeWaited = 0                        # How many milisecond we've waited, added
 $msExit = $secondsBeforeExit*1000      # This makes it code cleaner later
 
 # Write to host that we've started and let them know what to do
-Write-Host "Be sure to READ ALL instructions before starting`nIf able, you can move this window to a second screen to watch as the script runs, otherwise it runs in the background"
+$choice = Read-Host "1) Genshin Wish Tracker (default, cleaned format)`n2) Genshin Wish Tally (raw data)`nPlease choose your export format."
+Write-Host "`n`nBe sure to READ ALL instructions before starting`nIf able, you can move this window to a second screen to watch as the script runs, otherwise it runs in the background"
 Write-Host "`n1) Please go onto your Genshin wish history page `n2) Select all the text on the page (Ctrl+A after clicking anywhere in the page) `n3) Then copy (Ctrl+C) this text, there is no need to paste the text anywhere, data is gathered automtically `n4) Switch to the next page and repeat until the end `n`nThe script will timeout automatically after $secondsBeforeExit seconds of inactivity, results are copied to the clipboard in reverse order (to arrange oldest to newest)"
-$choice = Read-Host "`n`n1) Genshin Wish Tracker (default, cleaned format)`n2) Genshin Wish Tally (raw data)`nPlease choose your export format."
+
 switch ($choice) {
     1{$format = 1}
     2{$format = 2}
