@@ -10,6 +10,8 @@ Of course, to make things harder, its formatting is bad and requires extensive p
 This script is designed to work with two different wish trackers, [this wish tracker](https://docs.google.com/spreadsheets/d/1B9AXURjB4Y0HvOCBhIt8TzaqP1phoI17JlM_RvNtd9g/), which I found in this [reddit post](https://www.reddit.com/r/Genshin_Impact/comments/l2vi4w/my_friend_and_i_made_a_spreadsheet_to_see_all_of/) and [the community wish tally tracker](https://docs.google.com/spreadsheets/d/1_Or0KRVZ5nwCrHdO5c_8rqu2CWJ_aLETnZBLSYBDS_c/edit#gid=1027022977) which its latest post is [here on reddit with more detail](https://www.reddit.com/r/Genshin_Impact/comments/ltt4vp/wish_tally_v26_wish_history_pity_tracker_for/).
 The first spreadsheet was designed and posted to reddit by [/u/damoncles](https://www.reddit.com/user/damoncles) and has saved me a lot of time since I didn't have to make one myself to go with this script. The second was deigned by [u/Yippym](https://www.reddit.com/user/Yippym) and helps track not just for individuals but supports community tracking. As such, the output of this script is formated to be directly copy/pasted into only these two spreadsheet and may not work with others.
 
+Finally it should work is all supported languages for Genshin as of the 28th of Feburary 2021. However, the spreadsheets linked above only support their own languages so do check.
+
 ## How it works (Simple)
 0) Run the script, and choose your format.
 1) Go onto your Genshin wish history page (It starts monitoring the clipboard automatically)
@@ -42,8 +44,7 @@ Good stance to have; the code is easily readable and overly commented to guide a
 
 Below is the exact code, and since it's powershell, you can copy this into a powershell console or into the powershell ISE and run it directly yourself instead of using the .ps1 file located here.
 
-```
-# Initilizing Variables
+```# Initilizing Variables
 $clipboard = $null
 $oldClipboard = $null
 $array = $null
@@ -58,6 +59,9 @@ $milisecondSleepTime = 250             # How long we sleep before checking the c
 $secondsBeforeExit = 10                # How many seconds with nothing new copied, we exit after this
 $msWeWaited = 0                        # How many milisecond we've waited, added from the sleep timer in loop
 $msExit = $secondsBeforeExit*1000      # This makes it code cleaner later
+
+# Here we create the regex match for all languages, it's long but efficent enough with regex, uses twin anchors at the start and end to handle only matching in the wishes
+$regexMatch = "^(Weapon|Character|무기|캐릭터|武器|角色|武器|キャラクター|Arma|Personaje|Arme|Personnage|Оружие|Персонажи|อาวุธ|ตัวละคร|Vũ Khí|Nhân Vật|Waffe|Figur|Senjata|Karakter)$"
 
 # Write to host that we've started and let them know what to do
 $choice = Read-Host "1) Genshin Wish Tracker (Default, clean format)`n2) Genshin Wish Tally (Raw data + overide counter)`nPlease choose your export format."
@@ -83,7 +87,7 @@ while($active) {
     if ($compared -ne $null -and $clipboard -ne "") {
         # Main logic here is to parse through the windows clipboard to find a line containing Weapon or Character and thats it. 
         # Clipboard stores each newline as an item in a string array so we need to grab 2 post context as genshin web table copies in each entry as a newline rather than a tabbed table
-        $matchList = $clipboard | Select-String -Pattern '(Weapon|Character)$' -Context 0,2
+        $matchList = $clipboard | Select-String $regexMatch -Context 0,2
 
         # Setup data format based off choice
         switch ($format) {
@@ -144,10 +148,10 @@ if ($format -eq 2) {
     $array = $formatedArray
 }
 
-# Then pipe/pass (|) the array to the clipboard (clip.exe or clip for short)
-$array | clip
+# We use Set-Clipboard to store the array into the clipboard in UTF8 Compliant charactes for other languages
+Set-Clipboard $array
 Read-Host "`n`nThe clipboard gather loop has been completed.`nAll results have been copied to your clipboard. Please paste (Ctrl+V) the results into the spreadsheet.`n`nPress the enter key to exit and re-copy the data to the clipboard again."
-$array | clip # Add to clipboard again just in case its been overriden by a user copy command while the script was waiting
+Set-Clipboard $array # Add to clipboard again just in case its been overriden by a user copy command while the script was waiting
 ```
 
 ## Conclusion
