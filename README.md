@@ -7,12 +7,12 @@ To ease the task, I've written a very simple power shell script; one that works 
 Since the Genshin Impact 'Wish History' runs in a browser as mentioned above, on PC you can use the keyboard shortcuts to copy and paste the text from it.
 Of course, to make things harder, its formatting is bad and requires extensive parsing, which is why I started with a script.
 
-This script is designed to work with [this spreadsheet](https://docs.google.com/spreadsheets/d/1B9AXURjB4Y0HvOCBhIt8TzaqP1phoI17JlM_RvNtd9g/), which I found in this [reddit post](https://www.reddit.com/r/Genshin_Impact/comments/l2vi4w/my_friend_and_i_made_a_spreadsheet_to_see_all_of/).  
-The spreadsheet was designed and posted to reddit by [/u/damoncles](https://www.reddit.com/user/damoncles) and has saved me a lot of time since I didn't have to make one myself to go with this script. As such, the output of this script is formated to be directly copy/pasted into the spreadsheet and may not work with others that expect the raw values.
+This script is designed to work with two different wish trackers, [this wish tracker](https://docs.google.com/spreadsheets/d/1B9AXURjB4Y0HvOCBhIt8TzaqP1phoI17JlM_RvNtd9g/), which I found in this [reddit post](https://www.reddit.com/r/Genshin_Impact/comments/l2vi4w/my_friend_and_i_made_a_spreadsheet_to_see_all_of/) and [the community wish tally tracker](https://docs.google.com/spreadsheets/d/1_Or0KRVZ5nwCrHdO5c_8rqu2CWJ_aLETnZBLSYBDS_c/edit#gid=1027022977) which its latest post is [here on reddit with more detail](https://www.reddit.com/r/Genshin_Impact/comments/ltt4vp/wish_tally_v26_wish_history_pity_tracker_for/).
+The first spreadsheet was designed and posted to reddit by [/u/damoncles](https://www.reddit.com/user/damoncles) and has saved me a lot of time since I didn't have to make one myself to go with this script. The second was deigned by [u/Yippym](https://www.reddit.com/user/Yippym) and helps track not just for individuals but supports community tracking. As such, the output of this script is formated to be directly copy/pasted into only these two spreadsheet and may not work with others.
 
 ## How it works (Simple)
-0) Run the script, it starts monitoring the clipboard.
-1) Go onto your Genshin wish history page
+0) Run the script, and choose your format.
+1) Go onto your Genshin wish history page (It starts monitoring the clipboard automatically)
 2) Select all the text on the page (Ctrl+A after clicking anywhere in the page) - *It is smart enough to filter text don't worry*
 3) Then copy (Ctrl+C) this text, there is no need to paste the text anywhere, data is gathered automatically
 4) Switch to the next page and repeat until the end
