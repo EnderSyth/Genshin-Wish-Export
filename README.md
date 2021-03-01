@@ -13,15 +13,46 @@ The first spreadsheet was designed and posted to reddit by [/u/damoncles](https:
 Finally it should work is all supported languages for Genshin as of the 28th of Feburary 2021. However, the spreadsheets linked above only support their own languages so do check.
 
 ## How it works (Simple)
-0) Run the script, and choose your format.
-1) Go onto your Genshin wish history page (It starts monitoring the clipboard automatically)
-2) Select all the text on the page (Ctrl+A after clicking anywhere in the page) - *It is smart enough to filter text don't worry*
-3) Then copy (Ctrl+C) this text, there is no need to paste the text anywhere, data is gathered automatically
-4) Switch to the next page and repeat until the end
+1) Run the script, and choose your format.
+2) Go onto your Genshin wish history page (It starts monitoring the clipboard automatically)
+3) Select all the text on the page (Ctrl+A after clicking anywhere in the page) - *It is smart enough to filter text don't worry*
+4) Then copy (Ctrl+C) this text, there is no need to paste the text anywhere, data is gathered automatically
+5) Switch to the next page and repeat until the end
 
 The script will timeout automatically after 10 seconds of inactivity, results are copied to the clipboard (the order is reversed from how you copy it so older entries are first). Follow the link above to the spreadsheet and paste the results into the relevant pages.
 
-## More complicated
+## Visual Guide
+1) Download the .ps1 file from the release section  
+(Alternatively you can copy and paste the script under 'The Code' heading at the bottom of this page into the ISE)   
+![Releases](https://user-images.githubusercontent.com/15831708/109448388-b4616a00-79fa-11eb-9406-e3ef2f676deb.png) ![Download](https://user-images.githubusercontent.com/15831708/109448686-613be700-79fb-11eb-8eef-7cdb96f65342.png) 
+
+2) Run the code, either by right clicking on the file and chosing 'Run With Powershell'  
+(Alternatively you can load/copy it into the ISE up and choose (Run Script) at the top)
+![Run the Script Explorer](https://user-images.githubusercontent.com/15831708/109447882-9f380b80-79f9-11eb-89c3-155105409eb4.png)  
+![Run the Script ISE](https://user-images.githubusercontent.com/15831708/109448066-ffc74880-79f9-11eb-9900-7c57ffaa3339.png)
+
+3) Choose your export format, the script will the begin monitoring the clipboard
+![Running](https://user-images.githubusercontent.com/15831708/109450091-ee346f80-79fe-11eb-9fb8-247c3877c6e7.png)
+
+4) Goto your Genshin wish history page for the desired banner
+![History](https://user-images.githubusercontent.com/15831708/109449041-4fa70f00-79fc-11eb-842e-ee5f94ffc9d9.png)
+![History Page](https://user-images.githubusercontent.com/15831708/109449078-63527580-79fc-11eb-875e-7cff7457eedc.png)
+
+5) Select all the text on the page (Ctrl+A after clicking anywhere in the page)
+![Select All](https://user-images.githubusercontent.com/15831708/109449298-ec69ac80-79fc-11eb-900b-f6e3869406d8.png)
+
+6) Then copy (Ctrl+C) this text, there is no need to paste the text anywhere, data is gathered automtically 
+![Copy ALl](https://user-images.githubusercontent.com/15831708/109449398-318dde80-79fd-11eb-98ba-664fb873d90c.png)
+![Script Capture](https://user-images.githubusercontent.com/15831708/109451696-d7901780-7a02-11eb-9446-ceb5f3260009.png)
+
+7) Switch to the next page and repeat until the end. The script will automatically end after 10 seconds without copying new data
+![End](https://user-images.githubusercontent.com/15831708/109451839-3c4b7200-7a03-11eb-844a-e2a4a6ed50b7.png)
+
+
+
+
+
+## Details on how the script works
 The script works by calling the contents of the clipboard and comparing against its last recorded version. This means it does not double count if you copy the text 10 times in a row.
 
 Once it detects a change it does a regex search for '(Weapon|Character)$' with 2 post-context which grabs a match object we can then use to build our output string array. I do this with an ugly piped expression, but it works and reorders the match to fit being exported into the spreadsheets linked above.
@@ -44,7 +75,9 @@ Good stance to have; the code is easily readable and overly commented to guide a
 
 Below is the exact code, and since it's powershell, you can copy this into a powershell console or into the powershell ISE and run it directly yourself instead of using the .ps1 file located here.
 
-```# Initilizing Variables
+## The Code
+```
+# Initilizing Variables
 $clipboard = $null
 $oldClipboard = $null
 $array = $null
