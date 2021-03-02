@@ -48,12 +48,8 @@ The script will timeout automatically after 10 seconds of inactivity, results ar
 7) Switch to the next page and repeat until the end. The script will automatically end after 10 seconds without copying new data
 ![End](https://user-images.githubusercontent.com/15831708/109451839-3c4b7200-7a03-11eb-844a-e2a4a6ed50b7.png)
 
-## Video of the process avaialble here
+## Exapmle Video
 [![Watch the video](https://user-images.githubusercontent.com/15831708/109725017-6026c900-7b65-11eb-8917-79b0b89997f9.png)](https://streamable.com/tlz3fu)
-
-
-
-
 
 ## Details on how the script works
 The script works by calling the contents of the clipboard and comparing against its last recorded version. This means it does not double count if you copy the text 10 times in a row.
