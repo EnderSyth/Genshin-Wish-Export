@@ -14,8 +14,23 @@ $secondsBeforeExit = 10                # How many seconds with nothing new copie
 $msWeWaited = 0                        # How many milisecond we've waited, added from the sleep timer in loop
 $msExit = $secondsBeforeExit*1000      # This makes it code cleaner later
 
-# Here we create the regex match for all languages, it's long but efficent enough with regex, uses twin anchors at the start and end to handle only matching in the wishes
-$regexMatch = "^(Weapon|Character|무기|캐릭터|武器|角色|武器|キャラクター|Arma|Personaje|Arme|Personnage|Оружие|Персонажи|อาวุธ|ตัวละคร|Vũ Khí|Nhân Vật|Waffe|Figur|Senjata|Karakter)$"
+# Here we ask the user for the language to match, so as to avoid them not having the chracter set installed and then create the regex match
+Write-Host "1)	English`n2) 	Korean`n3)	Chinese`n4)	Japanese`n5)	Spanish`n6)	French`n7)	Russian`n8)	Thai`n9)	Vietnamese`n10)	German`n11)	Indonesian"
+$langChoice = Read-Host "Choose your game language above by number"
+switch ($langChoice) {
+    1 {$langRegex= "Weapon|Character" }
+    2 {$langRegex= "무기|캐릭터" }
+    3 {$langRegex= "武器|角色|武器" }
+    4 {$langRegex= "武器|キャラクター" }
+    5 {$langRegex= "Arma|Personaje" }
+    6 {$langRegex= "Arme|Personnage" }
+    7 {$langRegex= "Оружие|Персонажи" }
+    8 {$langRegex= "อาวุธ|ตัวละคร" }
+    9 {$langRegex= "Vũ Khí|Nhân Vật" }
+    10 {$langRegex= "Waffe|Figur" }
+    11 {$langRegex= "Senjata|Karakter" }
+}
+$regexMatch = "^($langRegex)$"
 
 # Write to host that we've started and let them know what to do
 $choice = Read-Host "1) Genshin Wish Tracker (Default, clean format)`n2) Genshin Wish Tally (Raw data + overide counter)`nPlease choose your export format."
