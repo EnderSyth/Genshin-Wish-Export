@@ -24,7 +24,7 @@ The script will timeout automatically after 10 seconds of inactivity, results ar
 ## Visual Guide
 1) Download the both the .ps1 and .bat files from the release page  
 (The .bat is optional but allows you to run the powershell scripts if you've never setup your powershell execution policy.)  
-(Alternatively you can copy and paste the script under 'The Code' heading at the bottom of this page into the Powershell ISE)   
+(Or if you wish copy the code directly from the .ps1 file above into the Powershell ISE)
 ![Releases](https://user-images.githubusercontent.com/15831708/109448388-b4616a00-79fa-11eb-9406-e3ef2f676deb.png) ![Download](https://user-images.githubusercontent.com/15831708/109906931-2681bb00-7c56-11eb-9c8e-80993952e7a9.png)
 
 
@@ -80,7 +80,9 @@ Below is the exact code, and since it's powershell, you can copy this into a pow
 ## The Code
 As the code has gotten a bit longer with all the extra features I'm not going to dump it in this readme. You can review the code by clicking the files located at the top of this page.  
 ![Files](https://user-images.githubusercontent.com/15831708/109910315-af9bf080-7c5c-11eb-85f8-1598a6c3d3e5.png)  
-You can even copy and paste the code from the .ps1 file into the Powershell ISE yourself if you wish to avoid possibly downloading anything. The batch file is simply the following code to launch powershell via cmd with a bypass on the execution policy which is defaulted to stop you from running powershell. '%~dpn0' just pulls the location of .bat file and its name and uses it to target the .ps1 file.
+You can even copy and paste the code from the .ps1 file into the Powershell ISE yourself if you wish to avoid possibly downloading anything.  
+
+The batch file is simply the following code to launch powershell via cmd with a bypass on the execution policy which is defaulted to stop you from running powershell. '%~dpn0' just pulls the location of .bat file and its name and uses it to target the .ps1 file.
 ```
 @ECHO OFF
 PowerShell.exe -ExecutionPolicy Bypass -Command "& '%~dpn0.ps1'"
