@@ -13,7 +13,7 @@ The first spreadsheet was designed and posted to reddit by [/u/damoncles](https:
 Finally it should work is all supported languages for Genshin as of the 28th of Feburary 2021. However, the spreadsheets linked above only support their own languages so do check.
 
 ## How it works (Simple)
-1) Run the script, and choose your format.
+1) Run the script, and choose your game language and spreadsheet format.
 2) Go onto your Genshin wish history page (It starts monitoring the clipboard automatically)
 3) Select all the text on the page (Ctrl+A after clicking anywhere in the page) - *It is smart enough to filter text don't worry*
 4) Then copy (Ctrl+C) this text, there is no need to paste the text anywhere, data is gathered automatically
@@ -22,17 +22,20 @@ Finally it should work is all supported languages for Genshin as of the 28th of 
 The script will timeout automatically after 10 seconds of inactivity, results are copied to the clipboard (the order is reversed from how you copy it so older entries are first). Follow the link above to the spreadsheet and paste the results into the relevant pages.
 
 ## Visual Guide
-1) Download the .ps1 file from the release section  
-(Alternatively you can copy and paste the script under 'The Code' heading at the bottom of this page into the ISE)   
-![Releases](https://user-images.githubusercontent.com/15831708/109448388-b4616a00-79fa-11eb-9406-e3ef2f676deb.png) ![Download](https://user-images.githubusercontent.com/15831708/109448686-613be700-79fb-11eb-8eef-7cdb96f65342.png) 
+1) Download the both the .ps1 and .bat files from the release page  
+(The .bat is optional but allows you to run the powershell scripts if you've never setup your powershell execution policy.)  
+(Alternatively you can copy and paste the script under 'The Code' heading at the bottom of this page into the Powershell ISE)   
+![Releases](https://user-images.githubusercontent.com/15831708/109448388-b4616a00-79fa-11eb-9406-e3ef2f676deb.png) ![Download](https://user-images.githubusercontent.com/15831708/109906931-2681bb00-7c56-11eb-9c8e-80993952e7a9.png)
 
-2) Run the code, either by right clicking on the file and chosing 'Run With Powershell'  
-(Alternatively you can load/copy it into the ISE up and choose (Run Script) at the top)
-![Run the Script Explorer](https://user-images.githubusercontent.com/15831708/109447882-9f380b80-79f9-11eb-89c3-155105409eb4.png)  
-![Run the Script ISE](https://user-images.githubusercontent.com/15831708/109448066-ffc74880-79f9-11eb-9900-7c57ffaa3339.png)
 
-3) Choose your export format, the script will the begin monitoring the clipboard
-![Running](https://user-images.githubusercontent.com/15831708/109450091-ee346f80-79fe-11eb-9fb8-247c3877c6e7.png)
+2) Run the code, for ease you can start with 'Genshin Wish Export.bat' and double click it or right-click then choose open.  
+(If you've run powershell scripts before you can right click and choose run, or use the powershell ISE select Run Script) 
+![Running Script](https://user-images.githubusercontent.com/15831708/109909505-13bdb500-7c5b-11eb-800c-b6c55c2981a9.png)
+![Run the Script ISE](https://user-images.githubusercontent.com/15831708/109908875-eb818680-7c59-11eb-8cb2-22f234c52970.png)
+
+
+3) Choose your Language and Export Format type, just type the choice number and hit enter. The script will the begin monitoring the clipboard
+![Running Script](https://user-images.githubusercontent.com/15831708/109908320-ebcd5200-7c58-11eb-86cd-387cef3a2d8c.png)
 
 4) Goto your Genshin wish history page for the desired banner
 ![History](https://user-images.githubusercontent.com/15831708/109449041-4fa70f00-79fc-11eb-842e-ee5f94ffc9d9.png)
@@ -49,7 +52,7 @@ The script will timeout automatically after 10 seconds of inactivity, results ar
 ![End](https://user-images.githubusercontent.com/15831708/109451839-3c4b7200-7a03-11eb-844a-e2a4a6ed50b7.png)
 
 ## Exapmle Video
-[![Watch the video](https://user-images.githubusercontent.com/15831708/109725017-6026c900-7b65-11eb-8917-79b0b89997f9.png)](https://streamable.com/tlz3fu)
+[![Watch the video](https://user-images.githubusercontent.com/15831708/109725017-6026c900-7b65-11eb-8917-79b0b89997f9.png)](https://streamable.com/lhq87w)
 
 ## Details on how the script works
 The script works by calling the contents of the clipboard and comparing against its last recorded version. This means it does not double count if you copy the text 10 times in a row.
@@ -75,115 +78,12 @@ Good stance to have; the code is easily readable and overly commented to guide a
 Below is the exact code, and since it's powershell, you can copy this into a powershell console or into the powershell ISE and run it directly yourself instead of using the .ps1 file located here.
 
 ## The Code
+As the code has gotten a bit longer with all the extra features I'm not going to dump it in this readme. You can review the code by clicking the files located at the top of this page.  
+![Files](https://user-images.githubusercontent.com/15831708/109910315-af9bf080-7c5c-11eb-85f8-1598a6c3d3e5.png)  
+You can even copy and paste the code from the .ps1 file into the Powershell ISE yourself if you wish to avoid possibly downloading anything. The batch file is simply the following code to launch powershell via cmd with a bypass on the execution policy which is defaulted to stop you from running powershell. '%~dpn0' just pulls the location of .bat file and its name and uses it to target the .ps1 file.
 ```
-# Initilizing Variables
-$clipboard = $null
-$oldClipboard = $null
-$array = $null
-$compared = $true
-$null | clip
-Clear-Host
-
-# Setting loop starting condition
-$active = $true                        # We use this for the loop below  
-$format = 1                            # Default format option (Genshin Wish Traker)
-$milisecondSleepTime = 250             # How long we sleep before checking the clipboard
-$secondsBeforeExit = 10                # How many seconds with nothing new copied, we exit after this
-$msWeWaited = 0                        # How many milisecond we've waited, added from the sleep timer in loop
-$msExit = $secondsBeforeExit*1000      # This makes it code cleaner later
-
-# Here we create the regex match for all languages, it's long but efficent enough with regex, uses twin anchors at the start and end to handle only matching in the wishes
-$regexMatch = "^(Weapon|Character|무기|캐릭터|武器|角色|武器|キャラクター|Arma|Personaje|Arme|Personnage|Оружие|Персонажи|อาวุธ|ตัวละคร|Vũ Khí|Nhân Vật|Waffe|Figur|Senjata|Karakter)$"
-
-# Write to host that we've started and let them know what to do
-$choice = Read-Host "1) Genshin Wish Tracker (Default, clean format)`n2) Genshin Wish Tally (Raw data + overide counter)`nPlease choose your export format."
-Write-Host "`n`nBe sure to READ ALL instructions before starting`nIf able, you can move this window to a second screen to watch as the script runs, otherwise it runs in the background"
-Write-Host "`n1) Please go onto your Genshin wish history page `n2) Select all the text on the page (Ctrl+A after clicking anywhere in the page) `n3) Then copy (Ctrl+C) this text, there is no need to paste the text anywhere, data is gathered automtically `n4) Switch to the next page and repeat until the end `n`nThe script will timeout automatically after $secondsBeforeExit seconds of inactivity, results are copied to the clipboard in reverse order (to arrange oldest to newest)"
-switch ($choice) {
-    1{$format = 1}
-    2{$format = 2}
-}
-
-# Start loop
-while($active) {
-    # Each loop we want to cache are old clipboard and grab a new one to see when we've copied new data
-    if ($clipboard) 
-        {$oldClipboard = $clipboard}
-    $clipboard = Get-Clipboard
-
-    # Checking for new data, compare object is null when no differences
-    if ($clipboard -and $oldClipboard) 
-        {$compared = Compare-Object -ReferenceObject $clipboard -DifferenceObject $oldClipboard}
-
-    # If the comparision isn't null and clipboard isn't empty
-    if ($compared -ne $null -and $clipboard -ne "") {
-        # Main logic here is to parse through the windows clipboard to find a line containing Weapon or Character and thats it. 
-        # Clipboard stores each newline as an item in a string array so we need to grab 2 post context as genshin web table copies in each entry as a newline rather than a tabbed table
-        $matchList = $clipboard | Select-String $regexMatch -Context 0,2
-
-        # Setup data format based off choice
-        switch ($format) {
-            1{
-                # Now we pipe (pass along) the match list to a foreach loop (%{}) and extract the values from each objects ($_) properties. Joined with tabs (`t). Ordered to work with the spreadsheet. Looks ugly but runs great
-                $strArrayList = $matchList | %{"$($_.Context.DisplayPostContext[1])`t$($_.Context.DisplayPostContext[0] -replace ' \(.*\)','' )`t$($_.Matches.Value)"}
-            }
-            2{
-                $strArrayList = $matchList | %{($_.Matches.Value,($_.Context.DisplayPostContext -join "")) -join "" }
-            }
-
-        }
-        # Check if we already have an array, if so add, if not make one
-        if ($array) {$array+=$strArrayList} 
-        else {$array = $strArrayList}
-
-        #Friendly console writing so you know its doing things right, return the array and count plus countdown. Apolgoise if how I use write-host is horrible below...
-        Clear-Host                    # Cleans the console screen up so its easier to read
-        Write-Host "`n`n`n`n`n`n"     # The writes a bunch of empty newlines to get below our fancy progress bar
-        $array                        # This just dumps the array into the console, its honestly the best way, write-host wants strings
-
-        # Reset our waiting timer
-        $msWeWaited = 0
-    }
-
-    # Check if we've waited past our exit timer
-    if ($msWeWaited -ge $msExit) {$active = $false} 
-    else {sleep -Milliseconds $milisecondSleepTime}
-
-    # If we've already copied something to oldClipboard then we should start adding to our countdown timer and activate the status bar
-    if ($oldClipboard) {
-        # Fancy Status Bar! Using [Int] which casts the double down to an interger, works to round without making the code hard to read with [Math]::Round($var,0)
-        Write-Progress -Id 0 -Activity "Current List Count: $($array.Count)" -Status "$([Int]($msWeWaited/1000)) of $secondsBeforeExit seconds for timer have passed since the last update. Will automatiacally exit if nothing new is copied." -PercentComplete ($msWeWaited/$msExit*100)
-        $msWeWaited += $milisecondSleepTime
-    }    
-}
-
-# Once we've exited I reverse the array so the oldest stuff is first, makes it easier to put into the spreadsheet since its in the correct order
-[Array]::Reverse($array)
-
-# Here we check if we're in Wish Tally format, if so we need to add override values to prevent sorting errors for multipulls
-if ($format -eq 2) {
-    # Grab array of just times then pull out the unique values
-    $timeArray = foreach ($item in $array) { ($item | sls -Pattern "[\d- :]{19}").Matches.Value }
-    $uniqueTimes = $timeArray | Get-Unique
-
-    # Here we set an array equal to the results of a foreach loop, we're going through each unique time and finding all the results that match, if there is more than 1 we add override numbers with `t characters
-    $formatedArray = foreach ($time in $uniqueTimes) {
-        $i = 1
-        $timeMatches = $array | sls -SimpleMatch $time
-        if ($timeMatches.Count -gt 1) {
-            $timeMatches | %{"$_`t$i" -replace "[\r\n]+","" ;$i++} # Here was do a foreach in short hand with %{}, we're also replacing any extra return (\r) or newlines (\n) with nothing to clean up the results
-        } else {
-            $timeMatches -replace "[\r\n]+"
-        }
-    }
-    # Set the array equal to our formated array
-    $array = $formatedArray
-}
-
-# We use Set-Clipboard to store the array into the clipboard in UTF8 Compliant charactes for other languages
-Set-Clipboard $array
-Read-Host "`n`nThe clipboard gather loop has been completed.`nAll results have been copied to your clipboard. Please paste (Ctrl+V) the results into the spreadsheet.`n`nPress the enter key to exit and re-copy the data to the clipboard again."
-Set-Clipboard $array # Add to clipboard again just in case its been overriden by a user copy command while the script was waiting
+@ECHO OFF
+PowerShell.exe -ExecutionPolicy Bypass -Command "& '%~dpn0.ps1'"
 ```
 
 ## Conclusion
