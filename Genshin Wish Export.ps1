@@ -94,21 +94,18 @@ while($active) {
     }    
 }
 
-# Once we've exited I reverse the array so the oldest stuff is first, makes it easier to put into the spreadsheet since its in the correct order
-[Array]::Reverse($array)
-
 # Here we check if we're in Wish Tally format, if so we need to add override values to prevent sorting errors for multipulls
 if ($format -eq 2) {
     # Grab array of just times then pull out the unique values
     $timeArray = foreach ($item in $array) { ($item | sls -Pattern "[\d- :]{19}").Matches.Value }
     $uniqueTimes = $timeArray | Get-Unique
 
-    # Here we set an array equal to the results of a foreach loop, we're going through each unique time and finding all the results that match, if there is more than 1 we add override numbers with `t characters
+    # Here we build a formated array from a foreach loop, using unique time as a search, add the override count if greater than 1 match
     $formatedArray = foreach ($time in $uniqueTimes) {
-        $i = 1
+        $i = 10 # Start at 10 as the array is still in newest to oldest format meaning the last wish of a 10 pull comes first
         $timeMatches = $array | sls -SimpleMatch $time
         if ($timeMatches.Count -gt 1) {
-            $timeMatches | %{"$_`t$i" -replace "[\r\n]+","" ;$i++} # Here was do a foreach in short hand with %{}, we're also replacing any extra return (\r) or newlines (\n) with nothing to clean up the results
+            $timeMatches | %{"$_`t$i" -replace "[\r\n]+","" ;$i--} # Here was do a foreach in short hand with %{}, we're also replacing any extra return (\r) or newlines (\n) with nothing to clean up the results
         } else {
             $timeMatches -replace "[\r\n]+"
         }
@@ -116,6 +113,9 @@ if ($format -eq 2) {
     # Set the array equal to our formated array
     $array = $formatedArray
 }
+
+# Once we're done with everything I reverse the array so the oldest stuff is first, makes it easier to put into the spreadsheet since its in the correct order
+[Array]::Reverse($array)
 
 # We use Set-Clipboard to store the array into the clipboard in UTF8 Compliant charactes for other languages
 Set-Clipboard $array
