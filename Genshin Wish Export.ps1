@@ -18,18 +18,20 @@ $msExit = $secondsBeforeExit*1000      # This makes it code cleaner later
 Write-Host "1)	English`n2) 	Korean`n3)	Chinese`n4)	Japanese`n5)	Spanish`n6)	French`n7)	Russian`n8)	Thai`n9)	Vietnamese`n10)	German`n11)	Indonesian"
 $langChoice = Read-Host "Choose your game language above by number"
 switch ($langChoice) {
-    1 {$langRegex= "Weapon|Character" }
-    2 {$langRegex= "무기|캐릭터" }
-    3 {$langRegex= "武器|角色|武器" }
-    4 {$langRegex= "武器|キャラクター" }
-    5 {$langRegex= "Arma|Personaje" }
-    6 {$langRegex= "Arme|Personnage" }
-    7 {$langRegex= "Оружие|Персонажи" }
-    8 {$langRegex= "อาวุธ|ตัวละคร" }
-    9 {$langRegex= "Vũ Khí|Nhân Vật" }
-    10 {$langRegex= "Waffe|Figur" }
-    11 {$langRegex= "Senjata|Karakter" }
+    # Strings are stored as encoded Base64 strings to avoid character encoding issues due to systems not having all languages installed
+    1 {$sEncodedString= "V2VhcG9ufENoYXJhY3Rlcg==" }                              # "Weapon|Character"
+    2 {$sEncodedString= "66y06riwfOy6kOumre2EsA==" }                              # "무기|캐릭터"
+    3 {$sEncodedString= "5q2m5ZmofOinkuiJsnzmrablmag=" }                          # "武器|角色|武器"
+    4 {$sEncodedString= "5q2m5ZmofOOCreODo+ODqeOCr+OCv+ODvA==" }                  # "武器|キャラクター"
+    5 {$sEncodedString= "QXJtYXxQZXJzb25hamU=" }                                  # "Arma|Personaje"
+    6 {$sEncodedString= "QXJtZXxQZXJzb25uYWdl" }                                  # "Arme|Personnage"
+    7 {$sEncodedString= "0J7RgNGD0LbQuNC1fNCf0LXRgNGB0L7QvdCw0LbQuA==" }          # "Оружие|Персонажи"
+    8 {$sEncodedString= "4Lit4Liy4Lin4Li44LiYfOC4leC4seC4p+C4peC4sOC4hOC4ow==" }  # "อาวุธ|ตัวละคร"
+    9 {$sEncodedString= "VsWpIEtow618TmjDom4gVuG6rXQ=" }                          # "Vũ Khí|Nhân Vật"
+    10 {$sEncodedString= "V2FmZmV8RmlndXI=" }                                     # "Waffe|Figur"
+    11 {$sEncodedString= "U2VuamF0YXxLYXJha3Rlcg==" }                             # "Senjata|Karakter"
 }
+$langRegex = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($sEncodedString))
 $regexMatch = "^($langRegex)$"
 
 # Write to host that we've started and let them know what to do
