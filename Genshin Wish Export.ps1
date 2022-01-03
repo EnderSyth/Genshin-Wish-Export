@@ -1,13 +1,18 @@
 # Initilizing Variables
 $clipboard = $null
 $oldClipboard = $null
-$array = $null
+$array = @()
 $compared = $true
 $null | clip
-$SpeechSynthesizer = New-Object –TypeName System.Speech.Synthesis.SpeechSynthesizer
-$envoice = ($SpeechSynthesizer.GetInstalledVoices()).voiceinfo | ?{ $_.Culture -like 'en*' } | Select-Object -First 1
-if ($envoice) {
-    $SpeechSynthesizer.SelectVoice($envoice.Name)
+# .Net Core, as of Powershell 7.1, can instantiate the object but throws an exception
+$SpeechSynthesizer = New-Object -TypeName System.Speech.Synthesis.SpeechSynthesizer
+try {
+    $envoice = ($SpeechSynthesizer.GetInstalledVoices()).voiceinfo | ?{ $_.Culture -like 'en*' } | Select-Object -First 1
+    if ($envoice) {
+        $SpeechSynthesizer.SelectVoice($envoice.Name)
+    }
+} catch [System.Management.Automation.MethodInvocationException] {
+    $SpeechSynthesizer = New-Object -ComObject SAPI.SpVoice
 }
 $SpeechSynthesizer.Rate = 2  # -10 to +10 scale
 Clear-Host
@@ -77,17 +82,16 @@ while($active) {
             2{
                 $strArrayList = $matchList | %{($_.Matches.Value,($_.Context.DisplayPostContext -join "")) -join "" }
             }
-
+            default{ $strArrayList = @() }
         }
-        # Check if we already have an array, if so add, if not make one
-        if ($array) {$array+=$strArrayList} 
-        else {$array = $strArrayList}
+        $array += $strArrayList
         #Friendly console writing so you know its doing things right, return the array and count plus countdown. Apolgoise if how I use write-host is horrible below...
         Clear-Host                    # Cleans the console screen up so its easier to read
         Write-Host "`n`n`n`n`n`n"     # The writes a bunch of empty newlines to get below our fancy progress bar
         $strArrayList                 # This dumps new items into the console, its honestly the best way, write-host wants strings
         # Audio feedback: progress
-        $SpeechSynthesizer.Speak("{0} added. {1} total" -f @($strArrayList.Length, $array.Length))
+        $addedCount = if ($strArrayList) { if ($strArrayList -is [Array]) { $strArrayList.Length } else { 1 } } else { 0 }
+        $SpeechSynthesizer.Speak("{0} added. {1} total" -f @($addedCount, $array.Length)) | Out-Null
 
         # Reset our waiting timer
         $msWeWaited = 0
@@ -125,7 +129,7 @@ if ($format -eq 2) {
     $array = $formatedArray
 }
 
-$SpeechSynthesizer.Speak("Completed: {0} total" -f $array.Length)
+$SpeechSynthesizer.Speak("Completed: {0} total" -f $array.Length) | Out-Null
 
 
 # Once we're done with everything I reverse the array so the oldest stuff is first, makes it easier to put into the spreadsheet since its in the correct order
