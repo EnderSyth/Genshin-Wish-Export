@@ -57,7 +57,7 @@ The script will timeout automatically after 10 seconds of inactivity, results ar
 ## Details on how the script works
 The script works by calling the contents of the clipboard and comparing against its last recorded version. This means it does not double count if you copy the text 10 times in a row.
 
-Once it detects a change it does a regex search for '(Weapon|Character)$' with 2 post-context which grabs a match object we can then use to build our output string array. I do this with an ugly piped expression, but it works and reorders the match to fit being exported into the spreadsheets linked above.
+Once it detects a change it does a regex search for '(Weapon|Character)$' with 3 post-context which grabs a match object we can then use to build our output string array. I do this with an ugly piped expression, but it works and reorders the match to fit being exported into the spreadsheets linked above.
 
 There is a sleep timer and a counter in the main loop that gives 10 seconds without a new clipboard being detected before it exits. It then reverses the array since we want it oldest to newest for our spreadsheet and tosses it at the clipboard. It also read-hosts the ending message so the user has a moment to process it.
 
