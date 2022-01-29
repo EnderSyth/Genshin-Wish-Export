@@ -1,9 +1,21 @@
 # Initilizing Variables
 $clipboard = $null
 $oldClipboard = $null
-$array = $null
+$array = @()
 $compared = $true
 $null | clip
+# .Net Core, as of Powershell 7.1, can instantiate the object but throws an exception
+Add-Type -AssemblyName System.Speech # Needed to load the non-core part of the assembly for speech
+$SpeechSynthesizer = New-Object -TypeName System.Speech.Synthesis.SpeechSynthesizer
+try {
+    $envoice = ($SpeechSynthesizer.GetInstalledVoices()).voiceinfo | ?{ $_.Culture -like 'en*' } | Select-Object -First 1
+    if ($envoice) {
+        $SpeechSynthesizer.SelectVoice($envoice.Name)
+    }
+} catch [System.Management.Automation.MethodInvocationException] {
+    $SpeechSynthesizer = New-Object -ComObject SAPI.SpVoice
+}
+$SpeechSynthesizer.Rate = 2  # -10 to +10 scale
 Clear-Host
 
 # Setting loop starting condition
@@ -56,6 +68,8 @@ while($active) {
 
     # If the comparision isn't null and clipboard isn't empty
     if ($compared -ne $null -and $clipboard -ne "") {
+        # Audio feedback: detected clipboard change
+        (New-Object System.Media.SoundPlayer $(Get-Random $(Get-ChildItem -Path "$env:windir\Media\*.wav").FullName)).Play()
         # Main logic here is to parse through the windows clipboard to find a line containing Weapon or Character and thats it. 
         # Clipboard stores each newline as an item in a string array so we need to grab 3 post context as genshin web table copies in each entry as a newline rather than a tabbed table
         $matchList = $clipboard | Select-String $regexMatch -Context 0,3
@@ -69,27 +83,27 @@ while($active) {
             2{
                 $strArrayList = $matchList | %{($_.Matches.Value,($_.Context.DisplayPostContext -join "")) -join "" }
             }
-
+            default{ $strArrayList = @() }
         }
-        # Check if we already have an array, if so add, if not make one
-        if ($array) {$array+=$strArrayList} 
-        else {$array = $strArrayList}
-
+        $array += $strArrayList
         #Friendly console writing so you know its doing things right, return the array and count plus countdown. Apolgoise if how I use write-host is horrible below...
         Clear-Host                    # Cleans the console screen up so its easier to read
         Write-Host "`n`n`n`n`n`n"     # The writes a bunch of empty newlines to get below our fancy progress bar
-        $array                        # This just dumps the array into the console, its honestly the best way, write-host wants strings
+        $strArrayList                 # This dumps new items into the console, its honestly the best way, write-host wants strings
+        # Audio feedback: progress
+        $addedCount = if ($strArrayList) { if ($strArrayList -is [Array]) { $strArrayList.Length } else { 1 } } else { 0 }
+        $SpeechSynthesizer.Speak("{0} added. {1} total" -f @($addedCount, $array.Length)) | Out-Null
 
         # Reset our waiting timer
         $msWeWaited = 0
     }
 
     # Check if we've waited past our exit timer
-    if ($msWeWaited -ge $msExit) {$active = $false} 
+    if ($msWeWaited -ge $msExit -and $array.Length -gt 0) {$active = $false} 
     else {sleep -Milliseconds $milisecondSleepTime}
 
     # If we've already copied something to oldClipboard then we should start adding to our countdown timer and activate the status bar
-    if ($oldClipboard) {
+    if ($oldClipboard -and $array.Length -gt 0) {
         # Fancy Status Bar! Using [Int] which casts the double down to an interger, works to round without making the code hard to read with [Math]::Round($var,0)
         Write-Progress -Id 0 -Activity "Current List Count: $($array.Count)" -Status "$([Int]($msWeWaited/1000)) of $secondsBeforeExit seconds for timer have passed since the last update. Will automatiacally exit if nothing new is copied." -PercentComplete ($msWeWaited/$msExit*100)
         $msWeWaited += $milisecondSleepTime
@@ -115,6 +129,9 @@ if ($format -eq 2) {
     # Set the array equal to our formated array
     $array = $formatedArray
 }
+
+$SpeechSynthesizer.Speak("Completed: {0} total" -f $array.Length) | Out-Null
+
 
 # Once we're done with everything I reverse the array so the oldest stuff is first, makes it easier to put into the spreadsheet since its in the correct order
 [Array]::Reverse($array)
