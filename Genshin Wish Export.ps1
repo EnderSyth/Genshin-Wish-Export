@@ -57,8 +57,8 @@ while($active) {
     # If the comparision isn't null and clipboard isn't empty
     if ($compared -ne $null -and $clipboard -ne "") {
         # Main logic here is to parse through the windows clipboard to find a line containing Weapon or Character and thats it. 
-        # Clipboard stores each newline as an item in a string array so we need to grab 2 post context as genshin web table copies in each entry as a newline rather than a tabbed table
-        $matchList = $clipboard | Select-String $regexMatch -Context 0,2
+        # Clipboard stores each newline as an item in a string array so we need to grab 3 post context as genshin web table copies in each entry as a newline rather than a tabbed table
+        $matchList = $clipboard | Select-String $regexMatch -Context 0,3
 
         # Setup data format based off choice
         switch ($format) {
