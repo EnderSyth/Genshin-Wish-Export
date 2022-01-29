@@ -5,6 +5,7 @@ $array = @()
 $compared = $true
 $null | clip
 # .Net Core, as of Powershell 7.1, can instantiate the object but throws an exception
+Add-Type -AssemblyName System.Speech # Needed to load the non-core part of the assembly for speech
 $SpeechSynthesizer = New-Object -TypeName System.Speech.Synthesis.SpeechSynthesizer
 try {
     $envoice = ($SpeechSynthesizer.GetInstalledVoices()).voiceinfo | ?{ $_.Culture -like 'en*' } | Select-Object -First 1
